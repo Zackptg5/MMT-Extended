@@ -192,8 +192,12 @@ install_script() {
     *) local INPATH=$NVBASE/service.d;;
   esac
   [ "$(grep "#!/system/bin/sh")" ] || sed -i "1i #!/system/bin/sh" $1
-  local i; for i in "MODPATH" "LIBDIR" "MODID" "INFO" "VEN"; do
-    [ "$i" == "MODPATH" ] && sed -i "1a $i=\${0%/*}" $1 || sed -i "1a $i=$(eval echo \$$i)" $1
+  local i; for i in "MODPATH" "LIBDIR" "MODID" "INFO" "MODDIR"; do
+    case $i in
+      "MODPATH") sed -i "1a $i=$NVBASE/modules/$MODID" $1
+      "MODDIR") sed -i "1a $i=\${0%/*}" $1
+      *) sed -i "1a $i=$(eval echo \$$i)" $1
+    esac
   done
   case $(basename $1) in
     post-fs-data.sh|service.sh) cp_ch -i $1 $MODPATH/$(basename $1);;
