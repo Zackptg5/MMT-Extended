@@ -32,4 +32,4 @@
 
 ### Usage
 - [See here for creating your repo from this template](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
-- Follow instructions in [Wiki](https://github.com/Zackptg5/MMT-Extended/Wiki)
+- Follow instructions in [Wiki](https://github.com/Zackptg5/MMT-Extended.Wiki)
