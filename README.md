@@ -24,7 +24,7 @@
       Addons Repository
     </a>
     <span> | </span>
-    <a href="https://forum.xda-developers.com/apps/magisk/MMT-Extended">
+    <a href="https://forum.xda-developers.com/apps/magisk/magisk-module-template-extended-mmt-ex-t4029819">
       XDA
     </a>
   </h3>
