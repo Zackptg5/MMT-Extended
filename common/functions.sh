@@ -251,7 +251,7 @@ main_install() {
       mv -f $MODPATH/system/$FILE $MODPATH/system/vendor/$FILE
     done
   fi
-  cp_ch -n $MODPATH/module.prop $MODULEROOT/.core/.$MODID-module.prop
+  cp_ch -n $MODPATH/module.prop $NVBASE/modules/.$MODID-module.prop
 
   # Handle replace folders
   for TARGET in $REPLACE; do
@@ -267,7 +267,7 @@ main_install() {
   fi
   
   # Remove info and uninstall file if not needed
-  [ -s $INFO ] && sed -i "1i FILE=$NVBASE/modules/.core/.$MODID-files\nMODID=$MODID" $MODPATH/uninstall.sh || rm -f $INFO $MODPATH/uninstall.sh
+  [ -s $INFO ] && sed -i "1i FILE=$NVBASE/modules/.$MODID-files\nMODID=$MODID" $MODPATH/uninstall.sh || rm -f $INFO $MODPATH/uninstall.sh
 
   # Set permissions
   ui_print " "
@@ -288,7 +288,7 @@ main_uninstall() {
   run_addons -u
 
   # Remove files
-  if [ -f $NVBASE/modules/.core/.$MODID-files ]; then
+  if [ -f $NVBASE/modules/.$MODID-files ]; then
     while read LINE; do
       if [ "$(echo -n $LINE | tail -c 1)" == "~" ]; then
         continue
@@ -301,9 +301,9 @@ main_uninstall() {
           [ "$(ls -A $LINE 2>/dev/null)" ] && break 1 || rm -rf $LINE
         done
       fi
-    done < $NVBASE/modules/.core/.$MODID-files
+    done < $NVBASE/modules/.$MODID-files
   fi
-  rm -rf $NVBASE/modules_update/$MODID $NVBASE/modules/.core/.$MODID-module.prop $NVBASE/modules/.core/.$MODID-files 2>/dev/null
+  rm -rf $NVBASE/modules_update/$MODID $NVBASE/modules/.$MODID-module.prop $NVBASE/modules/.$MODID-files 2>/dev/null
   $BOOTMODE && { [ -d $NVBASE/modules/$MODID ] && touch $NVBASE/modules/$MODID/remove; } || rm -rf $MODPATH
 
   # Run user install script
@@ -327,7 +327,7 @@ done
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $DEBUG ] && DEBUG=false
-INFO=$MODULEROOT/.core/.$MODID-files
+INFO=$NVBASE/modules/.$MODID-files
 if $DYNLIB; then
   LIBPATCH="\/vendor"
   LIBDIR=/system/vendor
@@ -373,8 +373,8 @@ custom
 
 # Determine mod installation status
 ui_print " "
-if [ -f "$NVBASE/modules/.core/.$MODID-module.prop" ]; then
-  if [ $(grep_prop versionCode $NVBASE/modules/.core/.$MODID-module.prop) -ge $(grep_prop versionCode $TMPDIR/module.prop) ]; then
+if [ -f "$NVBASE/modules/.$MODID-module.prop" ]; then
+  if [ $(grep_prop versionCode $NVBASE/modules/.$MODID-module.prop) -ge $(grep_prop versionCode $TMPDIR/module.prop) ]; then
     ui_print "- Current or newer version detected. Uninstalling!"
     main_uninstall
   else
