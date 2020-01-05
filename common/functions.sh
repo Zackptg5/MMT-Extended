@@ -191,7 +191,7 @@ install_script() {
     -p) shift; local INPATH=$NVBASE/post-fs-data.d;;
     *) local INPATH=$NVBASE/service.d;;
   esac
-  [ "$(grep "#!/system/bin/sh")" ] || sed -i "1i #!/system/bin/sh" $1
+  [ "$(grep "#!/system/bin/sh" $1)" ] || sed -i "1i #!/system/bin/sh" $1
   local i; for i in "MODPATH" "LIBDIR" "MODID" "INFO" "MODDIR"; do
     case $i in
       "MODPATH") sed -i "1a $i=$NVBASE/modules/$MODID" $1;;
@@ -200,7 +200,7 @@ install_script() {
     esac
   done
   case $(basename $1) in
-    post-fs-data.sh|service.sh) cp_ch -i $1 $MODPATH/$(basename $1);;
+    post-fs-data.sh|service.sh) cp_ch -n $1 $MODPATH/$(basename $1);;
     *) cp_ch -n $1 $INPATH/$(basename $1) 0755;;
   esac
 }
@@ -251,7 +251,7 @@ main_install() {
       mv -f $MODPATH/system/$FILE $MODPATH/system/vendor/$FILE
     done
   fi
-  cp -af $MODPATH/module.prop $MODULEROOT/.core/.$MODID-module.prop
+  cp_ch -n $MODPATH/module.prop $MODULEROOT/.core/.$MODID-module.prop
 
   # Handle replace folders
   for TARGET in $REPLACE; do
