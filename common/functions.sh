@@ -200,7 +200,7 @@ install_script() {
     esac
   done
   case $(basename $1) in
-    post-fs-data.sh|service.sh) cp_ch -n $1 $MODPATH/$(basename $1);;
+    post-fs-data.sh|service.sh) ;;
     *) cp_ch -n $1 $INPATH/$(basename $1) 0755;;
   esac
 }
@@ -233,11 +233,9 @@ main_install() {
     case $i in
       "$MODPATH/service.sh") install_script -l $i;;
       "$MODPATH/post-fs-data.sh") install_script -p $i;;
-      "$MODPATH/sepolicy.rule") [ -e "$PERSISTDIR" ] || continue # Copy over custom sepolicy rules
+      "$MODPATH/sepolicy.rule") [ -e "$PERSISTDIR" ] || continue
                                 ui_print "- Installing custom sepolicy patch"
-                                PERSISTMOD=$PERSISTDIR/magisk/$MODID
-                                mkdir -p $PERSISTMOD
-                                cp -af $MODPATH/sepolicy.rule $PERSISTMOD/sepolicy.rule;;
+                                cp_ch -n $MODPATH/sepolicy.rule $PERSISTMOD/sepolicy.rule;;
     esac
   done
 
@@ -327,6 +325,7 @@ done
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $DEBUG ] && DEBUG=false
+[ -e "$PERSISTDIR" ] && PERSISTMOD=$PERSISTDIR/magisk/$MODID
 INFO=$NVBASE/modules/.$MODID-files
 if $DYNLIB; then
   LIBPATCH="\/vendor"
