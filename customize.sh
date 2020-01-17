@@ -37,7 +37,7 @@ REPLACE="
 "
 
 ##########################################################################################
-# Custom Logic
+# Permissions
 ##########################################################################################
 
 set_permissions() {
@@ -58,13 +58,6 @@ set_permissions() {
   # set_perm $MODPATH/system/lib/libart.so 0 0 0644
   # set_perm /data/local/tmp/file.txt 0 0 644
 }
-
-# Custom Variables for Install AND Uninstall - Keep everything within this function - runs before uninstall/install
-custom() {
-  : # Remove this if adding to this function
-}
-
-# Custom Functions for Install AND Uninstall - You can put them here
 
 ##########################################################################################
 # MMT Extended Logic - Don't modify anything after this

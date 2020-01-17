@@ -2,10 +2,10 @@
 
 <div align="center">
   <!-- Version -->
-    <img src="https://img.shields.io/badge/Version-v1.1-blue.svg?longCache=true&style=popout-square"
+    <img src="https://img.shields.io/badge/Version-v1.2-blue.svg?longCache=true&style=popout-square"
       alt="Version" />
   <!-- Last Updated -->
-    <img src="https://img.shields.io/badge/Updated-January 11, 2020-green.svg?longCache=true&style=flat-square"
+    <img src="https://img.shields.io/badge/Updated-January 17, 2020-green.svg?longCache=true&style=flat-square"
       alt="_time_stamp_" />
 </div>
 
@@ -31,5 +31,5 @@
 </div>
 
 ### Usage
-- [See here for creating your repo from this template](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
-- Follow instructions in [Wiki](https://github.com/Zackptg5/MMT-Extended/wiki)
+- [Follow the directions here (DO NOT FORK)](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
+- Then follow instructions in [Wiki](https://github.com/Zackptg5/MMT-Extended/wiki)
