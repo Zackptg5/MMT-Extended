@@ -247,6 +247,8 @@ if $DYNLIB; then
     mv -f $MODPATH/system/$FILE $MODPATH/system/vendor/$FILE
     [ "$(ls -A `dirname $MODPATH/system/$FILE`)" ] || rm -rf `dirname $MODPATH/system/$FILE`
   done
+  # Delete empty lib folders (busybox find doesn't have this capability)
+  toybox find $MODPATH/system/lib* -type d -empty -delete 2>/dev/null
 fi
 
 # Set permissions
