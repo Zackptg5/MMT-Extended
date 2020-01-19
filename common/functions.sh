@@ -245,6 +245,7 @@ if $DYNLIB; then
     esac
     mkdir -p $(dirname $MODPATH/system/vendor/$FILE)
     mv -f $MODPATH/system/$FILE $MODPATH/system/vendor/$FILE
+    [ "$(ls -A `dirname $MODPATH/system/$FILE`)" ] || rm -rf `dirname $MODPATH/system/$FILE`
   done
 fi
 
