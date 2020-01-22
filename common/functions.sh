@@ -24,32 +24,31 @@ cleanup() {
 
 debug_log() {
   set +x
-  local LOG=/storage/emulated/0/$MODID-debug
-  echo -e "***---Device Info---***" > $LOG-tmp.log
-  echo -e "\n---Props---\n" >> $LOG-tmp.log
-  getprop >> $LOG-tmp.log
-  echo -e "\n\n***---Magisk Info---***" >> $LOG-tmp.log
-  echo -e "\n---Magisk Version---\n\n$MAGISK_VER_CODE" >> $LOG-tmp.log
-  echo -e "\n---Installed Modules---\n" >> $LOG-tmp.log
-  ls $NVBASE/modules >> $LOG-tmp.log
-  echo -e "\n---Last Magisk Log---\n" >> $LOG-tmp.log
-  cat /cache/magisk.log >> $LOG-tmp.log
-  echo -e "\n\n***---MMT Extended Debug Info---***" >> $LOG-tmp.log
+  echo -e "***---Device Info---***" > $LOGFILE-tmp.log
+  echo -e "\n---Props---\n" >> $LOGFILE-tmp.log
+  getprop >> $LOGFILE-tmp.log
+  echo -e "\n\n***---Magisk Info---***" >> $LOGFILE-tmp.log
+  echo -e "\n---Magisk Version---\n\n$MAGISK_VER_CODE" >> $LOGFILE-tmp.log
+  echo -e "\n---Installed Modules---\n" >> $LOGFILE-tmp.log
+  ls $NVBASE/modules >> $LOGFILE-tmp.log
+  echo -e "\n---Last Magisk Log---\n" >> $LOGFILE-tmp.log
+  cat /cache/magisk.log >> $LOGFILE-tmp.log
+  echo -e "\n\n***---MMT Extended Debug Info---***" >> $LOGFILE-tmp.log
   if [ -d "$MODPATH" ]; then
-    echo -e "\n---Installed Files---\n" >> $LOG-tmp.log
-    grep "^+* cp_ch" $LOG.log | sed 's/.* //g' >> $LOG-tmp.log
-    sed -i -e "\|$TMPDIR/|d" -e "\|$MODPATH|d" $LOG-tmp.log
-    find $MODPATH -type f >> $LOG-tmp.log
-    echo -e "\n---Installed Boot Scripts---\n" >> $LOG-tmp.log
-    grep "^+* install_script" $LOG.log | sed -e 's/.* //g' -e 's/^-.* //g' >> $LOG-tmp.log
-    echo -e "\n---Installed Prop Files---\n" >> $LOG-tmp.log
-    grep "^+* prop_process" $LOG.log | sed 's/.* //g' >> $LOG-tmp.log
+    echo -e "\n---Installed Files---\n" >> $LOGFILE-tmp.log
+    grep "^+* cp_ch" $LOGFILE.log | sed 's/.* //g' >> $LOGFILE-tmp.log
+    sed -i -e "\|$TMPDIR/|d" -e "\|$MODPATH|d" $LOGFILE-tmp.log
+    find $MODPATH -type f >> $LOGFILE-tmp.log
+    echo -e "\n---Installed Boot Scripts---\n" >> $LOGFILE-tmp.log
+    grep "^+* install_script" $LOGFILE.log | sed -e 's/.* //g' -e 's/^-.* //g' >> $LOGFILE-tmp.log
+    echo -e "\n---Installed Prop Files---\n" >> $LOGFILE-tmp.log
+    grep "^+* prop_process" $LOGFILE.log | sed 's/.* //g' >> $LOGFILE-tmp.log
   fi
-  echo -e "\n---Shell & MMT Extended Variables---\n" >> $LOG-tmp.log
-  (set) >> $LOG-tmp.log
-  echo -e "\n---(Un)Install Log---\n" >> $LOG-tmp.log
-  echo "$(cat $LOG.log)" >> $LOG-tmp.log
-  mv -f $LOG-tmp.log $LOG.log
+  echo -e "\n---Shell & MMT Extended Variables---\n" >> $LOGFILE-tmp.log
+  (set) >> $LOGFILE-tmp.log
+  echo -e "\n---(Un)Install Log---\n" >> $LOGFILE-tmp.log
+  echo "$(cat $LOGFILE.log)" >> $LOGFILE-tmp.log
+  mv -f $LOGFILE-tmp.log $LOGFILE.log
 }
 
 device_check() {
@@ -183,8 +182,9 @@ fi
 # Debug
 if $DEBUG; then
   ui_print "- Debug mode"
-  ui_print "  Debug log will be written to: /storage/emulated/0/$MODID-debug.log"
-  exec 2>/storage/emulated/0/$MODID-debug.log
+  LOGFILE=/storage/emulated/0/Download/$MODID-debug.log
+  ui_print "  Debug log will be written to: $LOGFILEFILE"
+  exec 2>$LOGFILEFILE
   set -x
 fi
 
@@ -248,13 +248,18 @@ if $DYNLIB; then
     [ "$(ls -A `dirname $MODPATH/system/$FILE`)" ] || rm -rf `dirname $MODPATH/system/$FILE`
   done
   # Delete empty lib folders (busybox find doesn't have this capability)
-  toybox find $MODPATH/system/lib* -type d -empty -delete 2>/dev/null
+  toybox find $MODPATH/system/lib* -type d -empty -delete >/dev/null 2>&1
 fi
 
 # Set permissions
 ui_print " "
 ui_print "- Setting Permissions"
 set_perm_recursive $MODPATH 0 0 0755 0644
+set_perm_recursive $MODPATH/system/vendor 0 0 0755 0644 u:object_r:vendor_file:s0
+set_perm_recursive $MODPATH/system/vendor/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
+for FILE in $(find $MODPATH/system/vendor -type f -name *".apk"); do
+  [ -f $FILE ] && chcon u:object_r:vendor_app_file:s0 $FILE
+done
 set_permissions
 
 # Complete install
