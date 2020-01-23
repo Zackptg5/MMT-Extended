@@ -255,11 +255,13 @@ fi
 ui_print " "
 ui_print "- Setting Permissions"
 set_perm_recursive $MODPATH 0 0 0755 0644
-set_perm_recursive $MODPATH/system/vendor 0 0 0755 0644 u:object_r:vendor_file:s0
-set_perm_recursive $MODPATH/system/vendor/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
-for FILE in $(find $MODPATH/system/vendor -type f -name *".apk"); do
-  [ -f $FILE ] && chcon u:object_r:vendor_app_file:s0 $FILE
-done
+if [ -d $MODPATH/system/vendor ]; then
+  set_perm_recursive $MODPATH/system/vendor 0 0 0755 0644 u:object_r:vendor_file:s0
+  [ -d $MODPATH/system/vendor/etc ] && set_perm_recursive $MODPATH/system/vendor/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
+  for FILE in $(find $MODPATH/system/vendor -type f -name *".apk"); do
+    [ -f $FILE ] && chcon u:object_r:vendor_app_file:s0 $FILE
+  done
+fi
 set_permissions
 
 # Complete install
