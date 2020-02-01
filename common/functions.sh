@@ -182,9 +182,9 @@ fi
 # Debug
 if $DEBUG; then
   ui_print "- Debug mode"
-  LOGFILE=/storage/emulated/0/Download/$MODID-debug.log
-  ui_print "  Debug log will be written to: $LOGFILE"
-  exec 2>$LOGFILE
+  LOGFILE=/storage/emulated/0/Download/$MODID-debug
+  ui_print "  Debug log will be written to: $LOGFILE.log"
+  exec 2>$LOGFILE.log
   set -x
 fi
 
