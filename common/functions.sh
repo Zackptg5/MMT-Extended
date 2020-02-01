@@ -52,7 +52,7 @@ debug_log() {
 }
 
 device_check() {
-  local PROP=$(echo "$1" | tr '[:upper:]' '[:lower:]') i
+  local PROP=$(echo "$1" | tr '[:upper:]' '[:lower:]')
   for i in /system /vendor /odm /product; do
     if [ -f $i/build.prop ]; then
       for j in "ro.product.device" "ro.build.product" "ro.product.vendor.device" "ro.vendor.product.device"; do
