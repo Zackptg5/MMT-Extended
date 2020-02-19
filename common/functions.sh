@@ -233,7 +233,8 @@ for i in $(find $MODPATH -type f -name "*.sh" -o -name "*.prop" -o -name "*.rule
     "$MODPATH/uninstall.sh") if [ -s $INFO ] || [ "$(head -n1 $MODPATH/uninstall.sh)" != "# Don't modify anything after this" ]; then
                                install_script $MODPATH/uninstall.sh
                              else
-                               rm -f $INFO $MODPATH/uninstall.sh;;
+                               rm -f $INFO $MODPATH/uninstall.sh
+                             fi;;
   esac
 done
 
