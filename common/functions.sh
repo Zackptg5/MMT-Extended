@@ -14,11 +14,6 @@ abort() {
 
 cleanup() {
   rm -rf $MODPATH/common 2>/dev/null
-  ui_print " "
-  ui_print "    **************************************"
-  ui_print "    *   MMT Extended by Zackptg5 @ XDA   *"
-  ui_print "    **************************************"
-  ui_print " "
 }
 
 device_check() {
@@ -38,6 +33,7 @@ device_check() {
       for j in "ro.product.$type" "ro.build.$type" "ro.product.vendor.$type" "ro.vendor.product.$type"; do
         [ "$(sed -n "s/^$j=//p" $i/build.prop 2>/dev/null | head -n 1 | tr '[:upper:]' '[:lower:]')" == "$prop" ] && return 0
       done
+      [ "$type" == "device" ] && [ "$(sed -n "s/^"ro.build.product"=//p" $i/build.prop 2>/dev/null | head -n 1 | tr '[:upper:]' '[:lower:]')" == "$prop" ] && return 0
     fi
   done
   return 1
@@ -109,6 +105,12 @@ prop_process() {
   done < $1
 }
 
+# Credits
+ui_print "**************************************"
+ui_print "*   MMT Extended by Zackptg5 @ XDA   *"
+ui_print "**************************************"
+ui_print " "
+
 # Check for min/max api version
 [ -z $MINAPI ] || { [ $API -lt $MINAPI ] && abort "! Your system API of $API is less than the minimum api of $MINAPI! Aborting!"; }
 [ -z $MAXAPI ] || { [ $API -gt $MAXAPI ] && abort "! Your system API of $API is greater than the maximum api of $MAXAPI! Aborting!"; }
@@ -117,7 +119,6 @@ prop_process() {
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $DEBUG ] && DEBUG=false
-[ -e "$PERSISTDIR" ] && PERSISTMOD=$PERSISTDIR/magisk/$MODID
 INFO=$NVBASE/modules/.$MODID-files
 ORIGDIR="$MAGISKTMP/mirror"
 if $DYNLIB; then
