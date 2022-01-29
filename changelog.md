@@ -1,5 +1,6 @@
 ### v2.0 - 1.29.2022
 * Update for magisk 24
+  * Added zygisk module support
 * Misc fixes
 
 ### v1.8 - 11.21.2021

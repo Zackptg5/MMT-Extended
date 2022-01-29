@@ -1,7 +1,7 @@
 id=MMT-Ex
 name=Magisk Module Template Extended
-version=v1.8
-versionCode=9
+version=v2.0
+versionCode=10
 author=Zackptg5
-description=
-support=https://forum.xda-developers.com/apps/magisk/MMT-Extended
+description=Magisk Module Template Extended
+updateJson=https://raw.githubusercontent.com/Zackptg5/MMT-Extended/master/update.json

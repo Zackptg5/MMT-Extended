@@ -2,18 +2,18 @@
 
 <div align="center">
   <!-- Version -->
-    <img src="https://img.shields.io/badge/Version-v1.8-blue.svg?longCache=true&style=popout-square"
+    <img src="https://img.shields.io/badge/Version-v2.0-blue.svg?longCache=true&style=popout-square"
       alt="Version" />
   <!-- Last Updated -->
-    <img src="https://img.shields.io/badge/Updated-November 21, 2021-green.svg?longCache=true&style=flat-square"
+    <img src="https://img.shields.io/badge/Updated-January 21, 2022-green.svg?longCache=true&style=flat-square"
       alt="_time_stamp_" />
   <!-- Min Magisk -->
     <img src="https://img.shields.io/badge/MinMagisk-20.4-red.svg?longCache=true&style=flat-square"
       alt="_time_stamp_" /></div>
 
 <div align="center">
-  <strong>MMT Extended is the spiritual successor of Unity and makes magisk module creation easy. More details in the 
-    <a href="https://github.com/Zackptg5/MMT-Extended/wiki">wiki</a>.
+  <strong>MMT Extended is the spiritual successor of Unity and makes magisk module creation easy. Instructions in the 
+    <h3><a href="https://github.com/Zackptg5/MMT-Extended/wiki">Wiki</a></h3>
 </div>
 
 <div align="center">

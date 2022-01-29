@@ -4,16 +4,16 @@
 #
 ##########################################################################################
 
+cleanup() {
+  rm -rf $MODPATH/common 2>/dev/null
+}
+
 abort() {
   ui_print "$1"
   rm -rf $MODPATH 2>/dev/null
   cleanup
   rm -rf $TMPDIR 2>/dev/null
   exit 1
-}
-
-cleanup() {
-  rm -rf $MODPATH/common 2>/dev/null
 }
 
 device_check() {
