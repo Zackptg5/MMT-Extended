@@ -121,7 +121,8 @@ ui_print " "
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $DEBUG ] && DEBUG=false
 INFO=$NVBASE/modules/.$MODID-files
-ORIGDIR="$MAGISKTMP/mirror"
+[ -z $INTERNALDIR ] && INTERNALDIR="$MAGISKTMP" # backwards compatibility for magisk < v26
+ORIGDIR="$INTERNALDIR/mirror"
 if $DYNLIB; then
   LIBPATCH="\/vendor"
   LIBDIR=/system/vendor

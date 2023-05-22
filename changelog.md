@@ -1,3 +1,6 @@
+### v2.1 - 5.22.2023
+* Update variables for magisk 26
+
 ### v2.0 - 1.29.2022
 * Update for magisk 24
   * Added zygisk module support
