@@ -121,11 +121,8 @@ ui_print " "
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $DEBUG ] && DEBUG=false
 INFO=$NVBASE/modules/.$MODID-files
-if [ "$(echo $MAGISKTMP | awk -F/ '{ print $NF}')" == ".magisk" ]; then
-  ORIGDIR="$MAGISKTMP/mirror"
-else
-  ORIGDIR="$MAGISKTMP/.magisk/mirror"
-fi
+MAGISKTMP="$(magisk --path)"
+ORIGDIR="$MAGISKTMP/.magisk/mirror"
 if $DYNLIB; then
   LIBPATCH="\/vendor"
   LIBDIR=/system/vendor
