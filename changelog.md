@@ -1,3 +1,10 @@
+### v3.0 - 7.10.2023
+* Add support for KSU modules
+* Add support for magisk delta
+* Add support for other partitions - note that you need magisk delta or ksu installed to use these
+* Make debug default behavior, remove flag
+* Fix uninstall script so it'll clean up files outside of module folder if user manually deletes module folder
+
 ### v2.1 - 5.24.2023
 * Update variables for magisk 26
 

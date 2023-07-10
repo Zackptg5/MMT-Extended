@@ -4,8 +4,18 @@
 #
 ##########################################################################################
 
+umount_mirrors() {
+  [ -d $ORIGDIR ] || return 0
+  for i in $ORIGDIR/*; do
+    umount -l $i 2>/dev/null
+  done
+  rm -rf $ORIGDIR 2>/dev/null
+  mount -o ro,remount $MAGISKTMP
+}
+
 cleanup() {
-  rm -rf $MODPATH/common 2>/dev/null
+  $KSU && umount_mirrors
+  rm -rf $MODPATH/common $MODPATH/install.zip 2>/dev/null
 }
 
 abort() {
@@ -90,9 +100,8 @@ install_script() {
       *) sed -i "1a $i=$(eval echo \$$i)" $1;;
     esac
   done
-  [ "$1" == "$MODPATH/uninstall.sh" ] && return 0
-  case $(basename $1) in
-    post-fs-data.sh|service.sh) ;;
+  case $1 in
+    "$MODPATH/post-fs-data.sh"|"$MODPATH/service.sh"|"$MODPATH/uninstall.sh") sed -i "s|^MODPATH=.*|MODPATH=\$MODDIR|" $1;; # MODPATH=MODDIR for these scripts (located in module directory)
     *) cp_ch -n $1 $INPATH/$(basename $1) 0755;;
   esac
 }
@@ -105,6 +114,23 @@ prop_process() {
   done < $1
 }
 
+mount_mirrors() {
+  mount -o rw,remount $MAGISKTMP
+  mkdir -p $ORIGDIR/system
+  if $SYSTEM_ROOT; then
+    mkdir -p $ORIGDIR/system_root
+    mount -o ro / $ORIGDIR/system_root
+    mount -o bind $ORIGDIR/system_root/system $ORIGDIR/system
+  else
+    mount -o ro /system $ORIGDIR/system
+  fi
+  for i in vendor $PARTITIONS; do
+    [ ! -d /$i -o -d $ORIGDIR/$i ] && continue
+    mkdir -p $ORIGDIR/$i
+    mount -o ro /$i $ORIGDIR/$i
+  done
+}
+
 # Credits
 ui_print "**************************************"
 ui_print "*   MMT Extended by Zackptg5 @ XDA   *"
@@ -115,13 +141,23 @@ ui_print " "
 [ -z $MINAPI ] || { [ $API -lt $MINAPI ] && abort "! Your system API of $API is less than the minimum api of $MINAPI! Aborting!"; }
 [ -z $MAXAPI ] || { [ $API -gt $MAXAPI ] && abort "! Your system API of $API is greater than the maximum api of $MAXAPI! Aborting!"; }
 
+
+# Start debug
+[ -z $KSU ] && KSU=false || exec 2>/sdcard/Download/$MODID-debug.log
+set -x
+
 # Set variables
 [ -z $ARCH32 ] && ARCH32="$(echo $ABI32 | cut -c-3)"
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
-[ -z $DEBUG ] && DEBUG=false
 INFO=$NVBASE/modules/.$MODID-files
-if [ "$(echo $MAGISKTMP | awk -F/ '{ print $NF}')" == ".magisk" ]; then
+if $KSU; then
+  MAGISKTMP="/mnt"
+  ORIGDIR="$MAGISKTMP/mirror"
+  mount_mirrors
+elif [ "$(magisk --path 2>/dev/null)" ]; then
+  ORIGDIR="$(magisk --path 2>/dev/null)/.magisk/mirror"
+elif [ "$(echo $MAGISKTMP | awk -F/ '{ print $NF}')" == ".magisk" ]; then
   ORIGDIR="$MAGISKTMP/mirror"
 else
   ORIGDIR="$MAGISKTMP/.magisk/mirror"
@@ -133,6 +169,14 @@ else
   LIBPATCH="\/system"
   LIBDIR=/system
 fi
+# Detect extra partition compatibility (KernelSU or Magisk Delta)
+if $KSU || [ "$(echo $MAGISK_VER | awk -F- '{ print $NF}')" == "delta" ]; then
+  EXTRAPART=true
+else
+  EXTRAPART=false
+  unset PARTITIONS
+fi
+
 if ! $BOOTMODE; then
   ui_print "- Only uninstall is supported in recovery"
   ui_print "  Uninstalling!"
@@ -142,14 +186,6 @@ if ! $BOOTMODE; then
   cleanup
   rm -rf $NVBASE/modules_update/$MODID $TMPDIR 2>/dev/null
   exit 0
-fi
-
-# Debug
-if $DEBUG; then
-  ui_print "- Debug mode"
-  ui_print "  Module install log will include debug info"
-  ui_print "  Be sure to save it after module install"
-  set -x
 fi
 
 # Extract files
@@ -198,7 +234,12 @@ for i in $(find $MODPATH -type f -name "*.sh" -o -name "*.prop" -o -name "*.rule
   case $i in
     "$MODPATH/service.sh") install_script -l $i;;
     "$MODPATH/post-fs-data.sh") install_script -p $i;;
-    "$MODPATH/uninstall.sh") if [ -s $INFO ] || [ "$(head -n1 $MODPATH/uninstall.sh)" != "# Don't modify anything after this" ]; then
+    "$MODPATH/uninstall.sh") if [ -s $INFO ] || [ "$(head -n1 $MODPATH/uninstall.sh)" != "# Don't modify anything after this" ]; then                          
+                               cp -f $MODPATH/uninstall.sh $MODPATH/$MODID-uninstall.sh # Fallback script in case module manually deleted
+                               sed -i "1i[ -d \"\$MODPATH\" ] && exit 0" $MODPATH/$MODID-uninstall.sh
+                               echo 'rm -f $0' >> $MODPATH/$MODID-uninstall.sh
+                               install_script -l $MODPATH/$MODID-uninstall.sh
+                               rm -f $MODPATH/$MODID-uninstall.sh
                                install_script $MODPATH/uninstall.sh
                              else
                                rm -f $INFO $MODPATH/uninstall.sh
@@ -227,15 +268,19 @@ fi
 ui_print " "
 ui_print "- Setting Permissions"
 set_perm_recursive $MODPATH 0 0 0755 0644
-if [ -d $MODPATH/system/vendor ]; then
-  set_perm_recursive $MODPATH/system/vendor 0 0 0755 0644 u:object_r:vendor_file:s0
-  [ -d $MODPATH/system/vendor/app ] && set_perm_recursive $MODPATH/system/vendor/app 0 0 0755 0644 u:object_r:vendor_app_file:s0
-  [ -d $MODPATH/system/vendor/etc ] && set_perm_recursive $MODPATH/system/vendor/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
-  [ -d $MODPATH/system/vendor/overlay ] && set_perm_recursive $MODPATH/system/vendor/overlay 0 0 0755 0644 u:object_r:vendor_overlay_file:s0
-  for FILE in $(find $MODPATH/system/vendor -type f -name *".apk"); do
-    [ -f $FILE ] && chcon u:object_r:vendor_app_file:s0 $FILE
-  done
-fi
+for i in /system/vendor /vendor /system/vendor/app /vendor/app /system/vendor/etc /vendor/etc /system/odm/etc /system/vendor/odm/etc /vendor/odm/etc /system/vendor/overlay /vendor/overlay; do
+  if [ -d "$MODPATH$i" ] && [ ! -L "$MODPATH$i" ]; then
+    case $i in
+      *"/vendor") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_file:s0;;
+      *"/app") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_app_file:s0;;
+      *"/overlay") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_overlay_file:s0;;
+      *"/etc") set_perm_recursive $MODPATH$i 0 2000 0755 0644 u:object_r:vendor_configs_file:s0;;
+    esac
+  fi
+done
+for i in $(find $MODPATH/system/vendor $MODPATH/vendor -type f -name *".apk" 2>/dev/null); do
+  chcon u:object_r:vendor_app_file:s0 $i
+done
 set_permissions
 
 # Complete install
