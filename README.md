@@ -13,7 +13,7 @@
 
 <div align="center">
   <strong>MMT Extended is the spiritual successor of Unity and makes magisk module creation easy. Instructions in the 
-    <h3><a href="https://github.com/Zackptg5/MMT-Extended/wiki">Wiki</a></h3>. Also supports KSU
+    <h3><a href="https://github.com/Zackptg5/MMT-Extended/wiki">Wiki</a></h3><h4>Also supports KSU</h4>
 </div>
 
 <div align="center">
