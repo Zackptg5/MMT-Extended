@@ -150,6 +150,7 @@ set -x
 [ -z $ARCH32 ] && ARCH32="$(echo $ABI32 | cut -c-3)"
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
+[ -z $PARTOVER ] && PARTOVER=false
 INFO=$NVBASE/modules/.$MODID-files
 if $KSU; then
   MAGISKTMP="/mnt"
@@ -170,10 +171,10 @@ else
   LIBDIR=/system
 fi
 # Detect extra partition compatibility (KernelSU or Magisk Delta)
+EXTRAPART=false
 if $KSU || [ "$(echo $MAGISK_VER | awk -F- '{ print $NF}')" == "delta" ]; then
   EXTRAPART=true
-else
-  EXTRAPART=false
+elif ! $PARTOVER; then
   unset PARTITIONS
 fi
 
