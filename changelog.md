@@ -1,4 +1,7 @@
-### v3.1 0 7.25.2023
+### v3.2 - 8.11.2023
+* Bug fixes for custom partitions
+
+### v3.1 - 7.25.2023
 * Add override for extra partitions in event you have workaround for support for regular magisk installs
 
 ### v3.0 - 7.10.2023

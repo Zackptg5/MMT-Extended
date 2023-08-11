@@ -124,10 +124,10 @@ mount_mirrors() {
   else
     mount -o ro /system $ORIGDIR/system
   fi
-  for i in vendor $PARTITIONS; do
-    [ ! -d /$i -o -d $ORIGDIR/$i ] && continue
-    mkdir -p $ORIGDIR/$i
-    mount -o ro /$i $ORIGDIR/$i
+  for i in /vendor $PARTITIONS; do
+    [ ! -d $i -o -d $ORIGDIR$i ] && continue
+    mkdir -p $ORIGDIR$i
+    mount -o ro $i $ORIGDIR$i
   done
 }
 
@@ -269,7 +269,7 @@ fi
 ui_print " "
 ui_print "- Setting Permissions"
 set_perm_recursive $MODPATH 0 0 0755 0644
-for i in /system/vendor /vendor /system/vendor/app /vendor/app /system/vendor/etc /vendor/etc /system/odm/etc /system/vendor/odm/etc /vendor/odm/etc /system/vendor/overlay /vendor/overlay; do
+for i in /system/vendor /vendor /system/vendor/app /vendor/app /system/vendor/etc /vendor/etc /system/odm/etc /odm/etc /system/vendor/odm/etc /vendor/odm/etc /system/vendor/overlay /vendor/overlay; do
   if [ -d "$MODPATH$i" ] && [ ! -L "$MODPATH$i" ]; then
     case $i in
       *"/vendor") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_file:s0;;
