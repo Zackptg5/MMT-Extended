@@ -1,3 +1,8 @@
+### v3.3 - 8.13.2023
+* Updates for KSU
+  * min ksu version now v0.6.6
+  * added support for boot-completed scripts
+
 ### v3.2 - 8.11.2023
 * Bug fixes for custom partitions
 

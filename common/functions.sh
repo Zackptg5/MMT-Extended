@@ -4,6 +4,13 @@
 #
 ##########################################################################################
 
+require_new_ksu() {
+  ui_print "**********************************"
+  ui_print " Please install KernelSU v0.6.6+! "
+  ui_print "**********************************"
+  exit 1
+}
+
 umount_mirrors() {
   [ -d $ORIGDIR ] || return 0
   for i in $ORIGDIR/*; do
@@ -88,9 +95,16 @@ cp_ch() {
 
 install_script() {
   case "$1" in
-    -l) shift; local INPATH=$NVBASE/service.d;;
-    -p) shift; local INPATH=$NVBASE/post-fs-data.d;;
-    *) local INPATH=$NVBASE/service.d;;
+    -b) shift; 
+        if $KSU; then
+          local INPATH=$NVBASE/boot-completed.d
+        else
+          local INPATH=$SERVICED
+          sed -i -e '1i (\nwhile [ "$(getprop sys.boot_completed)" != "1" ]; do\n  sleep 1\ndone\nsleep 3\n' -e '$a)&' $1
+        fi;;
+    -l) shift; local INPATH=$SERVICED;;
+    -p) shift; local INPATH=$POSTFSDATAD;;
+    *) local INPATH=$SERVICED;;
   esac
   [ "$(grep "#!/system/bin/sh" $1)" ] || sed -i "1i #!/system/bin/sh" $1
   local i; for i in "MODPATH" "LIBDIR" "MODID" "INFO" "MODDIR"; do
@@ -141,9 +155,11 @@ ui_print " "
 [ -z $MINAPI ] || { [ $API -lt $MINAPI ] && abort "! Your system API of $API is less than the minimum api of $MINAPI! Aborting!"; }
 [ -z $MAXAPI ] || { [ $API -gt $MAXAPI ] && abort "! Your system API of $API is greater than the maximum api of $MAXAPI! Aborting!"; }
 
+# Min KSU v0.6.6
+[ -z $KSU ] && KSU=false
+$KSU && { [ $KSU_VER_CODE -lt 11184 ] && require_new_ksu; }
 
 # Start debug
-[ -z $KSU ] && KSU=false || exec 2>/sdcard/Download/$MODID-debug.log
 set -x
 
 # Set variables
