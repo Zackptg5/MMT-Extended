@@ -1,3 +1,6 @@
+### v3.4 - 9.3.2023
+* Bug fix for boot-completed scripts
+
 ### v3.3 - 8.13.2023
 * Updates for KSU
   * min ksu version now v0.6.6
