@@ -1,3 +1,6 @@
+### v3.5 - 9.11.2023
+* Define SERVICED, POSTFSDATAD, and SYSTEM_ROOT if not already defined - were removed or renamed in magisk 26.2 and 26.3 for no good reason :/
+
 ### v3.4 - 9.3.2023
 * Bug fix for boot-completed scripts
 
