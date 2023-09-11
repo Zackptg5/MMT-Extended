@@ -168,6 +168,9 @@ set -x
 [ $API -lt 26 ] && DYNLIB=false
 [ -z $DYNLIB ] && DYNLIB=false
 [ -z $PARTOVER ] && PARTOVER=false
+[ -z $SYSTEM_ROOT ] && SYSTEM_ROOT=$SYSTEM_AS_ROOT # renamed in magisk v26.3
+[ -z $SERVICED ] && SERVICED=$NVBASE/service.d # removed in magisk v26.2
+[ -z $POSTFSDATAD ] && POSTFSDATAD=$NVBASE/post-fs-data.d # removed in magisk v26.2
 INFO=$NVBASE/modules/.$MODID-files
 if $KSU; then
   MAGISKTMP="/mnt"
