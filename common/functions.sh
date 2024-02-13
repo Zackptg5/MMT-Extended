@@ -190,9 +190,9 @@ else
   LIBPATCH="\/system"
   LIBDIR=/system
 fi
-# Detect extra partition compatibility (KernelSU or Magisk Delta)
+# Detect extra partition compatibility (KernelSU or Magisk Delta/Kitsune(rebrand))
 EXTRAPART=false
-if $KSU || [ "$(echo $MAGISK_VER | awk -F- '{ print $NF}')" == "delta" ]; then
+if $KSU || [ "$(echo $MAGISK_VER | awk -F- '{ print $NF}')" == "delta" ] || [ "$(echo $MAGISK_VER | awk -F- '{ print $NF}')" == "kitsune" ]; then
   EXTRAPART=true
 elif ! $PARTOVER; then
   unset PARTITIONS
