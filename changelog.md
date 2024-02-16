@@ -1,3 +1,8 @@
+### v3.6 - 2.16.2024
+* Update magisk delta support (now called kitsune)
+* Add support for APatch
+* Add support for magisk atomic mounting (in theory)
+
 ### v3.5 - 9.11.2023
 * Define SERVICED, POSTFSDATAD, and SYSTEM_ROOT if not already defined - were removed or renamed in magisk 26.2 and 26.3 for no good reason :/
 
