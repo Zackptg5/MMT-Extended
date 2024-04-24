@@ -17,11 +17,11 @@ umount_mirrors() {
     umount -l $i 2>/dev/null
   done
   rm -rf $ORIGDIR 2>/dev/null
-  mount -o ro,remount $MAGISKTMP
+  $KSU && mount -o ro,remount $MAGISKTMP
 }
 
 cleanup() {
-  $KSU && umount_mirrors
+  if $KSU || [ $MAGISK_VER_CODE -ge 27000 ]; then umount_mirrors; fi
   rm -rf $MODPATH/common $MODPATH/install.zip 2>/dev/null
 }
 
@@ -130,7 +130,7 @@ prop_process() {
 }
 
 mount_mirrors() {
-  mount -o rw,remount $MAGISKTMP
+  $KSU && mount -o rw,remount $MAGISKTMP
   mkdir -p $ORIGDIR/system
   if $SYSTEM_ROOT; then
     mkdir -p $ORIGDIR/system_root
@@ -180,11 +180,14 @@ if $KSU; then
   ORIGDIR="$MAGISKTMP/mirror"
   mount_mirrors
 elif [ "$(magisk --path 2>/dev/null)" ]; then
-  if [ "$(ls -A $(magisk --path)/.magisk/mirror 2>/dev/null)" ]; then
-    ORIGDIR="$(magisk --path 2>/dev/null)/.magisk/mirror"
-  else # Atomic Mount
+  if [ $MAGISK_VER_CODE -ge 27000 ]; then # Atomic Mount
+    if [ -z $MAGISKTMP ]; then
+      [ -d /sbin ] && MAGISKTMP=/sbin || MAGISKTMP=/debug_ramdisk
+    fi
     ORIGDIR="$MAGISKTMP/mirror"
     mount_mirrors
+  else
+    ORIGDIR="$(magisk --path 2>/dev/null)/.magisk/mirror"
   fi
 elif [ "$(echo $MAGISKTMP | awk -F/ '{ print $NF}')" == ".magisk" ]; then
   ORIGDIR="$MAGISKTMP/mirror"

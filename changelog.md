@@ -1,3 +1,6 @@
+### v3.7 - 4.24.2024
+* Magisk v27 fix
+
 ### v3.6 - 2.16.2024
 * Update magisk delta support (now called kitsune)
 * Add support for APatch
